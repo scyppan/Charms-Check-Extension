@@ -1,7 +1,9 @@
-let messagePosted = false; // Flag to check if message was successfully posted
-let initialAttemptFailed = false; // Flag to check if initial attempt failed
-let messagePending = false;
-let chatWindowOpen = false; // Track the state of the chat window
+// crosssite.js
+
+var messagePosted = false;      // Flag to check if message was successfully posted
+var initialAttemptFailed = false; // Flag to check if initial attempt failed
+var messagePending = false;
+var chatWindowOpen = false;     // Track the state of the chat window
 
 function callfunction(msg) {
     switch (msg) {
@@ -16,143 +18,141 @@ function callfunction(msg) {
 }
 
 function isChatWindowOpen() {
-    const chatWindow = document.querySelector('[jsname="ME4pNd"]');
-    const messageInput = document.querySelector('textarea');
-    const sendButton = document.querySelector('button[jsname="SoqoBf"]');
+    var chatWindow = document.querySelector('[jsname="ME4pNd"]');
+    var messageInput = document.querySelector('textarea');
+    var sendButton  = document.querySelector('button[jsname="SoqoBf"]');
 
     return chatWindow && isElementVisible(chatWindow) && messageInput && sendButton;
 }
 
 function openChatWindow() {
-    return new Promise((resolve, reject) => {
-        const chatButtonSelector = '[aria-label="Chat with everyone"][jsname="A5il2e"]';
-        const chatButton = document.querySelector(chatButtonSelector);
-
-        if (isElementVisible(chatButton)) {
-            simulateClick(chatButton);
-            setTimeout(() => {
-                if (isChatWindowOpen()) {
-                    chatWindowOpen = true;
-                    resolve();
-                } else {
-                    reject(new Error("Failed to open chat window."));
-                }
-            }, 200); // Adjust delay as necessary
-        } else {
-            reject(new Error("Chat button not found or not visible."));
-        }
+    return new Promise(function(resolve, reject) {
+        clickChatButton(
+            function() {
+                chatWindowOpen = true;
+                resolve();
+            },
+            function(err) {
+                reject(err);
+            }
+        );
     });
 }
 
-let debounceTimeout = null;
-
+var debounceTimeout = null;
 function msgpostmanager(message) {
-    // Clear any existing debounce timeout
     if (debounceTimeout) {
         clearTimeout(debounceTimeout);
     }
 
-    // Set a new debounce timeout
-    debounceTimeout = setTimeout(() => {
-        // Set the flag indicating a message is pending
+    debounceTimeout = setTimeout(function() {
         messagePending = true;
 
-        // Check if chat window is open, if not, try to open it
         if (!chatWindowOpen) {
-            openChatWindow().then(() => {
-                sendMessage(message).then(() => {
-                    messagePending = false; // Reset the flag after sending the message
-                    chatWindowOpen = true; // Keep the chat window open
-                }).catch(err => {
-                    console.error("Error sending message:", err);
-                    messagePending = false; // Reset the flag even if there's an error
-                    chatWindowOpen = true; // Keep the chat window open to attempt manually
-                });
-            }).catch(err => {
-                console.error("Error opening chat window:", err);
-                messagePending = false; // Reset the flag if opening the chat window fails
-                chatWindowOpen = false; // Allow the chat window to close
-            });
-        } else {
-            sendMessage(message).then(() => {
-                messagePending = false; // Reset the flag after sending the message
-            }).catch(err => {
-                console.error("Error sending message:", err);
-                messagePending = false; // Reset the flag even if there's an error
-            });
+            openChatWindow().then(
+                function() {
+                    sendMessage(message).then(
+                        function() {
+                            messagePending = false;
+                            chatWindowOpen = true;
+                        },
+                        function(err) {
+                            console.error("Error sending message:", err);
+                            messagePending = false;
+                            chatWindowOpen = true;
+                        }
+                    );
+                },
+                function(err) {
+                    console.error("Error opening chat window:", err);
+                    messagePending = false;
+                    chatWindowOpen = false;
+                }
+            );
         }
-    }, 300); // Adjust debounce delay as necessary
+        else {
+            sendMessage(message).then(
+                function() {
+                    messagePending = false;
+                },
+                function(err) {
+                    console.error("Error sending message:", err);
+                    messagePending = false;
+                }
+            );
+        }
+    }, 300);
 }
 
 function sendMessage(msg) {
-    return new Promise((resolve, reject) => {
+    return new Promise(function(resolve, reject) {
         console.log("Attempting to send message...");
-        const messageInputSelector = 'textarea'; // Selector for the message input field
-        const sendButtonSelector = 'button[jsname="SoqoBf"]'; // Selector for the send button
-        const messageContainerSelector1 = '.jO4O1'; // Selector for messages with class jO4O1
-        const messageContainerSelector2 = '.chmVPb'; // Selector for messages with class chmVPb
+        var inputSel   = 'textarea';
+        var buttonSel  = 'button[jsname="SoqoBf"]';
+        var containers = document.querySelectorAll('.jO4O1, .chmVPb');
 
-        let messageInput = document.querySelector(messageInputSelector);
-        let sendButton = document.querySelector(sendButtonSelector);
-        let messageContainer1 = document.querySelectorAll(messageContainerSelector1);
-        let messageContainer2 = document.querySelectorAll(messageContainerSelector2);
+        var messageInput = document.querySelector(inputSel);
+        var sendButton   = document.querySelector(buttonSel);
+        var beforeCount  = containers.length;
 
         if (messageInput && sendButton) {
             if (sendButton.hasAttribute('disabled')) {
                 sendButton.removeAttribute('disabled');
             }
-
             messageInput.value = msg;
             simulateClick(sendButton);
             console.log("Message sent.");
 
-            let initialMessageCount = messageContainer1.length + messageContainer2.length;
-            setTimeout(() => {
-                let newMessageContainer1 = document.querySelectorAll(messageContainerSelector1);
-                let newMessageContainer2 = document.querySelectorAll(messageContainerSelector2);
-                let newMessageCount = newMessageContainer1.length + newMessageContainer2.length;
+            setTimeout(function() {
+                var newCount = document.querySelectorAll('.jO4O1, .chmVPb').length;
+                console.log("Before:", beforeCount, "After:", newCount);
 
-                console.log(`Initial message count: ${initialMessageCount}, New message count: ${newMessageCount}`);
-                if (newMessageCount > initialMessageCount) {
+                if (newCount > beforeCount) {
                     console.log("Message successfully posted.");
                     messagePosted = true;
-                    messagePending = false; // Reset the flag after sending the message
+                    messagePending = false;
                     resolve();
                 } else {
                     console.log("Message was not posted. Retrying...");
-                    handleRetryOrFailure(1, msg).then(resolve).catch(reject); // Start retries with attempts = 1
+                    handleRetryOrFailure(1, msg).then(resolve).catch(reject);
                 }
-            }, 1000); // Increase the delay to ensure the message is detected
-        } else {
+            }, 1000);
+        }
+        else {
             console.log("Message input or send button not found. Retrying...");
-            handleRetryOrFailure(1, msg).then(resolve).catch(reject); // Start retries with attempts = 1
+            handleRetryOrFailure(1, msg).then(resolve).catch(reject);
         }
     });
 }
 
 function handleRetryOrFailure(attempts, msg) {
-    return new Promise((resolve, reject) => {
-        const maxAttempts = 50;
+    return new Promise(function(resolve, reject) {
+        var maxAttempts = 50;
         if (attempts >= maxAttempts) {
             if (!initialAttemptFailed) {
                 initialAttemptFailed = true;
                 showInitialFailurePrompt();
             }
-            messagePending = false; // Reset the flag even if there's an error
-            chatWindowOpen = true; // Keep the chat window open to attempt manually
+            messagePending = false;
+            chatWindowOpen = true;
             reject(new Error("Maximum retry attempts reached."));
-        } else {
-            setTimeout(() => {
-                sendMessage(msg).then(resolve).catch(() => {
-                    handleRetryOrFailure(attempts + 1, msg).then(resolve).catch(reject);
-                });
-            }, 500); // Increase the delay to prevent rapid retries
+        }
+        else {
+            setTimeout(function() {
+                sendMessage(msg)
+                    .then(resolve)
+                    .catch(function() {
+                        handleRetryOrFailure(attempts + 1, msg)
+                            .then(resolve)
+                            .catch(reject);
+                    });
+            }, 500);
         }
     });
 }
 
 function showInitialFailurePrompt() {
-    const modal = document.createElement('div');
+    var modal = document.createElement('div');
     modal.id = 'initialFailureModal';
     modal.style.position = 'fixed';
     modal.style.top = '50%';
@@ -162,21 +162,19 @@ function showInitialFailurePrompt() {
     modal.style.padding = '20px';
     modal.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
     modal.style.zIndex = '10000';
-    modal.innerHTML = `
-        <h3>Unable to connect to chat</h3>
-        <p>Charms Check is having difficulty connecting to the chat window. Can you please open it yourself?</p>
-        <button id="closeInitialFailureModal">Close</button>
-    `;
+    modal.innerHTML =
+        '<h3>Unable to connect to chat</h3>' +
+        '<p>Charms Check is having difficulty connecting to the chat window. Can you please open it yourself?</p>' +
+        '<button id="closeInitialFailureModal">Close</button>';
 
     document.body.appendChild(modal);
-
-    document.getElementById('closeInitialFailureModal').addEventListener('click', () => {
+    document.getElementById('closeInitialFailureModal').addEventListener('click', function() {
         modal.remove();
     });
 }
 
 function showFailurePrompt(msg) {
-    const modal = document.createElement('div');
+    var modal = document.createElement('div');
     modal.style.position = 'fixed';
     modal.style.top = '50%';
     modal.style.left = '50%';
@@ -185,58 +183,38 @@ function showFailurePrompt(msg) {
     modal.style.padding = '20px';
     modal.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
     modal.style.zIndex = '10000';
-    modal.innerHTML = `
-        <h3>Unable to post to chat</h3>
-        <p>However, here is your roll result: ${msg}</p>
-        <p>Closing any mini-windows (such as the "breakout rooms") and clicking the chat button yourself will likely resolve this issue.</p>
-        <button id="closeModal">Close</button>
-    `;
+    modal.innerHTML =
+        '<h3>Unable to post to chat</h3>' +
+        '<p>However, here is your roll result: ' + msg + '</p>' +
+        '<p>Closing any mini-windows and clicking the chat button yourself will likely resolve this issue.</p>' +
+        '<button id="closeModal">Close</button>';
 
     document.body.appendChild(modal);
-
-    document.getElementById('closeModal').addEventListener('click', () => {
+    document.getElementById('closeModal').addEventListener('click', function() {
         modal.remove();
     });
 }
 
-function simulateClick(element) {
-    if (element) {
-        const event = new MouseEvent('click', {
-            view: window,
-            bubbles: true,
-            cancelable: true
-        });
-        element.dispatchEvent(event);
-    } else {
-        console.error("Element not found to click.");
-    }
-}
-
 function addeventlistener() {
-    window.addEventListener("message", function(event) {
-        // Ensure the message is coming from the expected origin, if possible
+    window.addEventListener('message', function(event) {
         if (event.origin !== "https://charmscheck.com") {
             return;
         }
-
-        // Process the message
-        const message = event.data;
-        console.log("Received message from iframe:", message);
-
-        // Call the function to post the message to chat
-        msgpostmanager(message);
+        console.log("Received message from iframe:", event.data);
+        msgpostmanager(event.data);
     }, false);
 }
 
-// Initialize MutationObserver for continuous retries
+// Bootstrap the retry observer
 initButtonObserver();
 
 function initButtonObserver() {
-    const targetNode = document.body;
-    const config = { childList: true, subtree: true };
+    var targetNode = document.body;
+    var config     = { childList: true, subtree: true };
 
-    const callback = (mutationsList) => {
-        for (let mutation of mutationsList) {
+    function callback(mutationsList) {
+        for (var i = 0; i < mutationsList.length; i++) {
+            var mutation = mutationsList[i];
             if (mutation.type === 'childList') {
                 console.log("DOM mutation detected. Checking if buttons need to be assigned...");
                 if (messagePending) {
@@ -246,9 +224,9 @@ function initButtonObserver() {
                 }
             }
         }
-    };
+    }
 
-    const observer = new MutationObserver(callback);
+    var observer = new MutationObserver(callback);
     observer.observe(targetNode, config);
 }
 
@@ -258,121 +236,38 @@ function tryAssignButtons() {
         return;
     }
 
-    const chatButton = document.querySelector('[aria-label="Chat with everyone"][jsname="A5il2e"]');
-    const moreOptionsButton = document.querySelector('[jscontroller="PIVayb"][aria-label="More options"]');
-    const possibleChatWindow = document.querySelector('[jsname="ME4pNd"]');
+    var chatButton       = document.querySelector('[aria-label="Chat with everyone"][jsname="A5il2e"]');
+    var moreOptionsButton= document.querySelector('[jscontroller="PIVayb"][aria-label="More options"]');
 
     if (isElementVisible(chatButton)) {
-        if (isChatWindow(possibleChatWindow)) {
-            console.log("Chat window is already open. Proceeding...");
-            finalizeInitialization();
-        } else {
-            console.log("Chat button found. Clicking...");
-            clickChatButton().then(() => {
-                console.log("Chat button clicked successfully.");
-                finalizeInitialization();
-            }).catch(err => {
-                console.error("Error clicking chat button: ", err);
-            });
-        }
-    } else if (isElementVisible(moreOptionsButton)) {
-        console.log("More options button found. Clicking...");
-        openMoreOptionsPanel().then(() => {
-            console.log("More options panel opened. Trying to click chat button...");
-            clickChatButton().then(() => {
-                console.log("Chat button clicked successfully.");
-                finalizeInitialization();
-            }).catch(err => {
-                console.error("Error clicking chat button: ", err);
-            });
-        }).catch(err => {
-            console.error("Error opening more options panel: ", err);
-        });
-    } else {
-        console.log("Buttons not found. Retrying...");
-        setTimeout(() => tryAssignButtons(), 50);
+        clickChatButton(
+            function() { finalizeInitialization(); },
+            function(err) { console.error("Error clicking chat button:", err); }
+        );
+    }
+    else if (isElementVisible(moreOptionsButton)) {
+        openMoreOptionsPanel(
+            function() {
+                clickChatButton(
+                    function() { finalizeInitialization(); },
+                    function(err) { console.error("Error clicking chat button:", err); }
+                );
+            },
+            function(err) { console.error("Error opening more options panel:", err); }
+        );
+    }
+    else {
+        window.setTimeout(function() {
+            tryAssignButtons();
+        }, 50);
     }
 }
 
 function finalizeInitialization() {
     if (initialAttemptFailed) {
-        document.getElementById('initialFailureModal')?.remove(); // Close the initial failure modal if it exists
-        msgpostmanager(`{AUTOMATED MESSAGE} Hey everyone! I have logged in with my charms check extension enabled!`);
+        var modal = document.getElementById('initialFailureModal');
+        if (modal) { modal.remove(); }
+        msgpostmanager("{AUTOMATED MESSAGE} Hey everyone! I have logged in with my charms check extension enabled!");
         initialAttemptFailed = false;
     }
-}
-
-function clickChatButton() {
-    return new Promise((resolve, reject) => {
-        const chatButtonSelector = '[aria-label="Chat with everyone"][jsname="A5il2e"]';
-        const chatWindowSelector = '[jsname="ME4pNd"]';
-        const messageInputSelector = 'textarea'; // Adjust selector as needed
-        const sendButtonSelector = 'button[jsname="SoqoBf"]'; // Adjust selector as needed
-
-        function clickChatButtonAndCheck(attempts = 0) {
-            if (attempts >= 50) {
-                console.error("Failed to open chat window after 50 attempts.");
-                reject(new Error("Failed to open chat window."));
-                return;
-            }
-
-            const chatButton = document.querySelector(chatButtonSelector);
-            if (isElementVisible(chatButton)) {
-                console.log("Chat button is visible. Clicking...");
-                simulateClick(chatButton);
-
-                // Add a short delay before checking the chat window state
-                setTimeout(() => {
-                    const chatWindow = document.querySelector(chatWindowSelector);
-                    const messageInput = document.querySelector(messageInputSelector);
-                    const sendButton = document.querySelector(sendButtonSelector);
-
-                    console.log("Chat window state:", {
-                        chatWindow: chatWindow ? 'visible' : 'not visible',
-                        messageInput: messageInput ? 'found' : 'not found',
-                        sendButton: sendButton ? 'found' : 'not found'
-                    });
-
-                    if (chatWindow && messageInput && sendButton) {
-                        console.log("Chat window opened successfully.");
-                        resolve();
-                    } else {
-                        console.log("Chat window or required elements not detected. Retrying...");
-                        clickChatButtonAndCheck(attempts + 1);
-                    }
-                }, 200); // Adjust delay as necessary
-            } else {
-                console.log("Chat button not visible or not found. Retrying...");
-                setTimeout(() => clickChatButtonAndCheck(attempts + 1), 200); // Adjust delay as necessary
-            }
-        }
-
-        clickChatButtonAndCheck();
-    });
-}
-
-function openMoreOptionsPanel() {
-    return new Promise((resolve, reject) => {
-        const moreOptionsButton = document.querySelector('[jscontroller="PIVayb"][aria-label="More options"]');
-        if (moreOptionsButton) {
-            simulateClick(moreOptionsButton);
-            resolve();
-        } else {
-            reject(new Error("More options button not found"));
-        }
-    });
-}
-
-function isChatWindow(element) {
-    if (!element) return false;
-
-    // Check for the presence of chat-specific elements
-    const messageInput = element.querySelector('textarea');
-    const sendButton = element.querySelector('button[jsname="SoqoBf"]');
-
-    return isElementVisible(messageInput) && isElementVisible(sendButton);
-}
-
-function isElementVisible(el) {
-    return el && el.offsetWidth > 0 && el.offsetHeight > 0;
 }

@@ -14,7 +14,7 @@ function createcharmscheckpanel() {
 
         // Add some content to the panel to make it visible
         const content = document.createElement('div');
-        content.innerHTML = '<p>Charms Check Extension v24</p>';
+        content.innerHTML = '<p>Charms Check Extension 25</p>';
         charmscheckpanel.appendChild(content);
     }
 
@@ -29,7 +29,7 @@ function createcharmscheckpanel() {
     // Function to update button position based on panel state
     function updateButtonPosition() {
         if (charmscheckpanel.classList.contains('expanded')) {
-            toggleButton.style.left = 'calc(35% + 10px)'; // Adjust based on expanded panel width
+            toggleButton.style.left = 'calc(45% + 10px)'; // Adjust based on expanded panel width
         } else {
             toggleButton.style.left = '10px'; // Adjust based on collapsed panel width
         }
@@ -73,7 +73,7 @@ function createiframe() {
 
     // Create an iframe element
     var iframe = document.createElement('iframe');
-    iframe.src = "https://charmscheck.com/extension-homepage-2/";
+    iframe.src = "https://charmscheck.com/character-sheet-25/";
     iframe.classList.add('iframe-content'); // Add class to iframe
 
     // Append the iframe to the charmscheckpanel
