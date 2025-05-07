@@ -73,14 +73,24 @@
     margin: auto; /* Center the image within the button */
 }
 
-/* toggle container */
 #toggle-container {
     position: fixed;
     top: 10px;
     left: 10px;
+  
+    /* make it a vertical flex that can wrap into new columns */
     display: flex;
-    flex-direction: column;
+    flex-flow: column wrap;
+  
+    /* lock its height so wrapping can happen */
+    height: calc(100vh - 20px);
+  
+    /* keep the same gap */
     gap: 8px;
+  
+    /* scroll if you still overflow vertically */
+    overflow-y: auto;
+  
     z-index: 1001;
   }
 
@@ -105,4 +115,24 @@
     top:      10px;
     left:     calc(45% + 20px);
     z-index:  1002;
+  }
+
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 8px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+  }
+  .panel-header h6 {
+    margin: 0;
+    font-size: 1em;
+    color: #000;
+  }
+  .close-panel-btn {
+    background-color: #c9a2a2;
+    border-radius: 7px;
+    cursor: pointer;
+    color: #000;
   }

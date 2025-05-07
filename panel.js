@@ -24,8 +24,24 @@ function createcharmscheckpanel() {
 
     // 4) add your header/content
     var content = document.createElement('div');
-    content.innerHTML = '<p>Charms Check Extension 25 — Sheet #' + panelcount + '</p>';
+    content.innerHTML =
+        content.innerHTML =
+        '<span class="panel-header">' +
+        '<h6>Charms Check Extension 25 — Sheet #' + panelcount + '</h6>' +
+        '<button class="close-panel-btn" title="clicking this button will not collapse the panel, but will fully destroy it, clearing all data">destroy this panel</button>' +
+        '</span>';
     charmscheckpanel.appendChild(content);
+
+    var closeBtn = charmscheckpanel.querySelector('.close-panel-btn');
+    closeBtn.addEventListener('click', function (e) {
+        e.stopPropagation();  // prevent the panel toggle from firing
+
+        // remove the panel wrapper
+        parentContainer.remove();
+
+        // also remove its associated toggle button
+        toggleButton.remove();
+    }, false);
 
     // 5) inline the iframe
     var iframe = document.createElement('iframe');
@@ -79,10 +95,9 @@ function createiframe() {
 function removeAllParentContainers() {
     // grab a static list of every .parent-container in the document
     var panels = document.querySelectorAll('.parent-container');
-    
+
     // remove each one—no other siblings will be touched
-    panels.forEach(function(panel) {
-      panel.parentNode.removeChild(panel);
+    panels.forEach(function (panel) {
+        panel.parentNode.removeChild(panel);
     });
-  }
-  
+}
