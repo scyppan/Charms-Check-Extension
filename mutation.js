@@ -37,3 +37,20 @@ if (isInChatInterface()) {
     console.log("Not in chat interface. Setting up MutationObserver...");
     initMainCallObserver();
 }
+
+// watch for the “.TZFSLb” overlay and close it 1 s after it appears
+const overlayObserver = new MutationObserver(() => {
+    const overlay = document.querySelector('.TZFSLb');
+    if (overlay) {
+      setTimeout(() => {
+        const o = document.querySelector('.TZFSLb');
+        if (o) o.remove();
+      }, 3000);
+    }
+  });
+  
+  // start observing
+  overlayObserver.observe(document.body, {
+    childList: true,
+    subtree: true
+  });

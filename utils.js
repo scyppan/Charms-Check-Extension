@@ -71,7 +71,6 @@ function clickChatButton(onSuccess, onFailure) {
                       console.log("this is the button", btn);
                       console.log("Chat button is visible & chat is closed. Clicking...");
                       simulateClick(btn);
-                      console.log("I tried to click");
                   
                       // try again in 200 ms
                       setTimeout(clickUntilChatOpens, 200);

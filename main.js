@@ -57,12 +57,17 @@ function initializecharmscheck() {
                         reject(err);
                     }
                 );
+
+
             }
         });
     }).then(function() {
         // post your automated message
         msgpostmanager("{AUTOMATED MESSAGE} Hey everyone! I have logged in with my charms check extension enabled!");
         console.log("Message posted.");
+
+      
+      
     }).catch(function(err) {
         console.error("Error during testing:", err);
     });
