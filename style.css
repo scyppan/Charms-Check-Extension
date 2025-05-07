@@ -32,7 +32,7 @@
     color: #000; /* Text color */
     display: flex;
     flex-direction: column;
-    z-index: 1001; /* Ensure it is above other content */
+    z-index: 1003; /* Ensure it is above other content */
 }
 
 /* CSS for expanded panel */

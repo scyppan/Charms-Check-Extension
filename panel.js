@@ -33,6 +33,10 @@ function createcharmscheckpanel() {
     iframe.classList.add('iframe-content');
     charmscheckpanel.appendChild(iframe);
 
+    var variants = 10;
+    var choice = Math.floor(Math.random() * variants) + 1;
+    iframe.classList.add('bg-' + choice);
+
     // 6) create the toggle button
     var toggleButton = document.createElement('button');
     toggleButton.innerHTML =

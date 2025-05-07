@@ -9,7 +9,7 @@
   ],
   "content_scripts": [
     {
-      "css": ["style.css", "battle.css"],
+      "css": ["style.css", "battle.css", "backgroundrand.css"],
       "matches": ["https://meet.google.com/*"],
       "exclude_matches": [
         "https://meet.google.com/landing*",
