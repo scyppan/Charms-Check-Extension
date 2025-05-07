@@ -8,7 +8,8 @@
     width: calc(100% / 0.9);
     height: calc(100% / 0.9);
 
-    border: none; /* Remove border */  
+    border: none;
+    /* Remove border */
 }
 
 .parent-container {
@@ -18,121 +19,122 @@
     display: flex;
     width: 100%;
     height: 100vh;
-  }
-  
+}
 
 /* CSS for charmscheckpanel */
 .charmscheckpanel {
     height: 100%;
-    width: 0; /* Start collapsed */
-    background-color: #ede5d1; /* Background color */
-    border: 1px solid #c9b486; /* Border color */
-    overflow-x: hidden; /* Hide horizontal overflow */
-    transition: width 0.3s; /* Smooth transition */
-    color: #000; /* Text color */
+    width: 0;
+    /* Start collapsed */
+    background-color: #ede5d1;
+    /* Background color */
+    border: 1px solid #c9b486;
+    /* Border color */
+    overflow-x: hidden;
+    /* Hide horizontal overflow */
+    transition: width 0.3s;
+    /* Smooth transition */
+    color: #000;
+    /* Text color */
     display: flex;
     flex-direction: column;
-    z-index: 1003; /* Ensure it is above other content */
+    z-index: 1003;
+    /* Ensure it is above other content */
 }
 
 /* CSS for expanded panel */
 .expanded {
-    width: 45%; /* Expanded width */
+    width: 45%;
+    /* Expanded width */
 }
 
 /* CSS for collapsed panel */
 .collapsed {
-    width: 0px; /* Collapsed width */
+    width: 0px;
+    /* Collapsed width */
 }
 
-/* CSS for toggle button */
-.toggle-button {
-    /* static by default so flex can stack */
-    position: static;
-    top:    auto;
-    left:   auto;
-  
-    /* your existing styling */
-    background-color: #ede5d1;
-    color:            #fff;
-    border:           none;
-    border-radius:    12px;
-    width:            40px;
-    height:           40px;
-    padding:          0;
-    cursor:           pointer;
-  
-    /* keep the slide transition for when floating */
-    transition: left 0.7s ease, top 0.3s ease;
-  }
-
-.toggle-button img {
-    width: 24px;
-    height: 24px;
-    display: block;
-    margin: auto; /* Center the image within the button */
-}
-
-#toggle-container {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-  
-    /* make it a vertical flex that can wrap into new columns */
-    display: flex;
-    flex-flow: column wrap;
-  
-    /* lock its height so wrapping can happen */
-    height: calc(100vh - 20px);
-  
-    /* keep the same gap */
-    gap: 8px;
-  
-    /* scroll if you still overflow vertically */
-    overflow-y: auto;
-  
-    z-index: 1001;
-  }
-
-  /* base toggle button */
-.toggle-button {
-  /* position: static is the default; just don’t override it */
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  transition: left 0.7s ease, top 0.3s ease;
-  /* keep your existing background, size, etc. */
-  background-color: #ede5d1;
-  color: #fff;
-  border-radius: 12px;
-  width: 40px;
-  height: 40px;
-  overflow: visible;
-}
-  
-.toggle-button.floating {
-    position: fixed !important;
-    top:      10px;
-    left:     calc(45% + 20px);
-    z-index:  1002;
-  }
-
-  .panel-header {
+.panel-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 8px;
     margin-top: 3px;
     margin-bottom: 3px;
-  }
-  .panel-header h6 {
+}
+
+.panel-header h6 {
     margin: 0;
     font-size: 1em;
     color: #000;
-  }
-  .close-panel-btn {
-    background-color: #c9a2a2;
+}
+
+.close-panel-btn {
+    background-color: #d6c1c1;
     border-radius: 7px;
     cursor: pointer;
     color: #000;
-  }
+}
+
+#toggle-container {
+    position: fixed;
+    display: flex;
+    flex-flow: column wrap;
+    height: calc(100vh - 20px);
+    gap: 8px;    
+    z-index: 1001;
+}
+
+.toggle-button img {
+    width: 24px;
+    height: 24px;
+    display: block;
+    margin: auto;
+}
+
+.toggle-button {
+    background-color: #ede5d1;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    cursor: pointer;
+    transition: left 0.7s ease, top 0.3s ease;
+    position: relative;
+    overflow: visible;
+}
+
+.toggle-button.floating {
+    position: fixed !important;
+    top: 10px;
+    left: calc(45% + 20px);
+    z-index: 1002;
+}
+
+span.toggle-label {
+    position: absolute !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    text-align: center !important;
+    overflow: visible !important;
+}
+
+.toggle-label {
+    padding: 1px;
+    display: block !important;
+    background-color: #c9b486 !important;
+    border-radius: 3px !important;
+    font-size: 9px !important;
+    margin-top: 3px !important;
+    color: #333 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    pointer-events: none !important;
+}
+
+.toggle-label:empty {
+    display: none !important;
+}

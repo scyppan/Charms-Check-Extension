@@ -1,4 +1,7 @@
 function simulateClick(element) {
+    
+    console.log("simulating click on btn", element);
+
     if (element) {
         var event = new MouseEvent('click', {
             view: window,
@@ -31,7 +34,7 @@ function retryUntilSuccess(action, maxRetries, delay, onSuccess, onFailure) {
 function openMoreOptionsPanel(onSuccess, onFailure) {
     retryUntilSuccess(
         function () {
-            var btn = document.querySelector('[jscontroller="PIVayb"][aria-label="More options"]');
+            var btn = document.querySelector('button[aria-label="More options"][aria-haspopup="dialog"]');
             if (isElementVisible(btn)) {
                 console.log("More options button is visible. Clicking...");
                 simulateClick(btn);
@@ -44,7 +47,7 @@ function openMoreOptionsPanel(onSuccess, onFailure) {
         function () {
             retryUntilSuccess(
                 function () {
-                    var panel = document.querySelector('.TZFSLb.AM6FT.P9KVBf.qjTEB');
+                    var panel = document.querySelector('.TZFSLb');
                     return isElementVisible(panel);
                 },
                 50,
@@ -60,12 +63,25 @@ function openMoreOptionsPanel(onSuccess, onFailure) {
 function clickChatButton(onSuccess, onFailure) {
     retryUntilSuccess(
         function () {
-            var btn = document.querySelector('[aria-label="Chat with everyone"][jsname="A5il2e"]');
+            var btn = document.querySelector('[aria-label="Chat with everyone"]');
             if (isElementVisible(btn)) {
-                if (!isChatWindowOpen()) {
-                    console.log("Chat button is visible & chat is closed. Clicking...");
-                    simulateClick(btn);
-                }
+                (function clickUntilChatOpens() {
+                    // if chat still closed…
+                    if (!isChatWindowOpen()) {
+                      console.log("this is the button", btn);
+                      console.log("Chat button is visible & chat is closed. Clicking...");
+                      simulateClick(btn);
+                      console.log("I tried to click");
+                  
+                      // try again in 200 ms
+                      setTimeout(clickUntilChatOpens, 200);
+                    } else {
+                      // once open, grab the window
+                      const win = document.querySelector('[jsname="ME4pNd"]');
+                      console.log("Chat window opened:", win);
+                      // you’ve succeeded!
+                    }
+                  })();
 
                 return true;
             }

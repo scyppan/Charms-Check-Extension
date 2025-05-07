@@ -1,7 +1,6 @@
 var panelcount = 1;
 
 function createcharmscheckpanel() {
-
     // 1) ensure there’s one shared flex-column for all toggles
     var toggleContainer = document.getElementById('toggle-container');
     if (!toggleContainer) {
@@ -14,66 +13,72 @@ function createcharmscheckpanel() {
     var parentContainer = document.createElement('div');
     parentContainer.id = 'parent-container-' + panelcount;
     parentContainer.classList.add('parent-container');
+    parentContainer.dataset.panelId = panelcount;    // ← tie to panelcount
     document.body.prepend(parentContainer);
 
     // 3) create the panel DIV
     var charmscheckpanel = document.createElement('div');
     charmscheckpanel.id = 'charmscheckpanel' + panelcount;
     charmscheckpanel.classList.add('charmscheckpanel', 'collapsed');
+    charmscheckpanel.dataset.panelId = panelcount;   // ← optional, same ID
     parentContainer.appendChild(charmscheckpanel);
 
-    // 4) add your header/content
+    // 4) header + destroy button
     var content = document.createElement('div');
     content.innerHTML =
-        content.innerHTML =
-        '<span class="panel-header">' +
+      '<span class="panel-header">' +
         '<h6>Charms Check Extension 25 — Sheet #' + panelcount + '</h6>' +
-        '<button class="close-panel-btn" title="clicking this button will not collapse the panel, but will fully destroy it, clearing all data">destroy this panel</button>' +
-        '</span>';
+        '<button class="close-panel-btn" ' +
+                'title="clicking this will destroy panel #' + panelcount + '">' +
+          'destroy this panel' +
+        '</button>' +
+      '</span>';
     charmscheckpanel.appendChild(content);
 
-    var closeBtn = charmscheckpanel.querySelector('.close-panel-btn');
-    closeBtn.addEventListener('click', function (e) {
-        e.stopPropagation();  // prevent the panel toggle from firing
-
-        // remove the panel wrapper
-        parentContainer.remove();
-
-        // also remove its associated toggle button
-        toggleButton.remove();
-    }, false);
-
-    // 5) inline the iframe
+    // 5) iframe
     var iframe = document.createElement('iframe');
     iframe.src = 'https://charmscheck.com/character-sheet-25/';
     iframe.classList.add('iframe-content');
+    iframe.dataset.panelId = panelcount;             // ← tie to panelcount
     charmscheckpanel.appendChild(iframe);
 
-    var variants = 10;
-    var choice = Math.floor(Math.random() * variants) + 1;
+    // random bg
+    var choice = Math.floor(Math.random() * 10) + 1;
     iframe.classList.add('bg-' + choice);
 
-    // 6) create the toggle button
+    // 6) toggle button
     var toggleButton = document.createElement('button');
-    toggleButton.innerHTML =
-        '<img src="https://charmscheck.com/wp-content/uploads/2021/09/cropped-Icon1.png" alt="Toggle">';
     toggleButton.classList.add('toggle-button', 'initial-animation');
+    toggleButton.dataset.panelId = panelcount;       // ← tie to panelcount
+    toggleButton.innerHTML =
+      '<img src="https://charmscheck.com/wp-content/uploads/2021/09/cropped-Icon1.png" alt="Toggle">' +
+      '<span class="toggle-label"></span>';
+    
+    // allow easy lookup: iframe and button reference each other
+    iframe._toggleButton = toggleButton;
+    toggleButton._iframe = iframe;
 
-    // 7) click handler: atomically toggle panel + floating
+    // 7) toggle handler
     toggleButton.addEventListener('click', function () {
-        // flip both panel classes
         charmscheckpanel.classList.toggle('collapsed');
         charmscheckpanel.classList.toggle('expanded');
-        // and flip the button’s floating state
         toggleButton.classList.toggle('floating');
     }, false);
 
-    // 8) append the toggle into our flex-column container
+    // 8) append toggle
     toggleContainer.appendChild(toggleButton);
 
-    // 9) finish your initial-animation hook
+    // 9) finish initial-animation
     toggleButton.addEventListener('animationend', function () {
         toggleButton.classList.remove('initial-animation');
+    }, false);
+
+    // 10) destroy handler
+    var closeBtn = charmscheckpanel.querySelector('.close-panel-btn');
+    closeBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        parentContainer.remove();
+        toggleButton.remove();
     }, false);
 
     panelcount++;
