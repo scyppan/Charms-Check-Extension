@@ -1,30 +1,33 @@
 {
-    "name": "Charms Check Extension 25",
-    "version": "25.5.7.3",
-    "description": "A google meet based extension for Charms Check",
-    "manifest_version": 3,
-    "author": "Scyppan",
-    "content_scripts": [
-      {
-        "css": ["style.css"],
-        "matches": ["https://meet.google.com/*"],
-        "exclude_matches": [
-          "https://meet.google.com/landing*",
-          "https://meet.google.com/*/unsupported"
-        ],
-        "js": [
-          "utils.js",
-          "panel.js",
-          "crosssite.js",
-          "main.js",
-          "mutation.js"
-        ],
-        "run_at": "document_end"
-      }
-    ],
-    "action": {
-      "default_popup": "index.html",
-      "default_title": "Charms Check Chrome Extension for Google Meet"
+  "name": "Charms Check Extension 25",
+  "version": "25.5.7.4",
+  "manifest_version": 3,
+  "description": "A google meet based extension for Charms Check",
+  "author": "Scyppan",
+  "permissions": [
+    "tabs"
+  ],
+  "content_scripts": [
+    {
+      "css": ["style.css", "battle.css"],
+      "matches": ["https://meet.google.com/*"],
+      "exclude_matches": [
+        "https://meet.google.com/landing*",
+        "https://meet.google.com/*/unsupported"
+      ],
+      "js": [
+        "utils.js",
+        "panel.js",
+        "crosssite.js",
+        "main.js",
+        "mutation.js",
+        "battlemanager.js"
+      ],
+      "run_at": "document_end"
     }
+  ],
+  "action": {
+    "default_popup": "battlemanager.html",
+    "default_title": "Charms Check Chrome Extension for Google Meet"
   }
-  
+}

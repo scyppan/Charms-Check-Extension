@@ -1,0 +1,35 @@
+body {
+    font-family: sans-serif;
+    padding: 1em;
+    margin: 0;
+  }
+  
+  #controls {
+    margin-bottom: 1em;
+  }
+  
+  #sheets {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+  
+  .sheet-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .toggle-btn {
+    padding: 0.5em;
+    font-size: 1em;
+    cursor: pointer;
+  }
+  
+  .sheet-frame {
+    width: 100%;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+  }
+  

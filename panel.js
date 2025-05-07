@@ -1,81 +1,84 @@
-let charmscheckpanel = null;
+var panelcount = 1;
 
 function createcharmscheckpanel() {
-    // Create a parent container
-    const parentContainer = document.createElement('div');
-    parentContainer.id = 'parent-container';
 
-    // Get the charmscheckpanel element
-    charmscheckpanel = document.getElementById('charmscheckpanel');
-    if (!charmscheckpanel) {
-        charmscheckpanel = document.createElement('div');
-        charmscheckpanel.id = "charmscheckpanel";
-        charmscheckpanel.classList.add('collapsed');
-
-        // Add some content to the panel to make it visible
-        const content = document.createElement('div');
-        content.innerHTML = '<p>Charms Check Extension 25</p>';
-        charmscheckpanel.appendChild(content);
+    // 1) ensure there’s one shared flex-column for all toggles
+    var toggleContainer = document.getElementById('toggle-container');
+    if (!toggleContainer) {
+        toggleContainer = document.createElement('div');
+        toggleContainer.id = 'toggle-container';
+        document.body.appendChild(toggleContainer);
     }
 
-    // Append the charmscheckpanel to the parent container
-    parentContainer.appendChild(charmscheckpanel);
-
-    // Create a button to toggle the panel
-    const toggleButton = document.createElement('button');
-    toggleButton.innerHTML = '<img src="https://charmscheck.com/wp-content/uploads/2021/09/cropped-Icon1.png" alt="Toggle" style="width: 24px; height: 24px;">'; // Replace with your WordPress icon URL
-    toggleButton.classList.add('toggle-button', 'initial-animation');
-
-    // Function to update button position based on panel state
-    function updateButtonPosition() {
-        if (charmscheckpanel.classList.contains('expanded')) {
-            toggleButton.style.left = 'calc(45% + 10px)'; // Adjust based on expanded panel width
-        } else {
-            toggleButton.style.left = '10px'; // Adjust based on collapsed panel width
-        }
-    }
-
-    toggleButton.addEventListener('click', function () {
-        if (charmscheckpanel.classList.contains('expanded')) {
-            charmscheckpanel.classList.remove('expanded');
-            charmscheckpanel.classList.add('collapsed');
-        } else {
-            charmscheckpanel.classList.remove('collapsed');
-            charmscheckpanel.classList.add('expanded');
-        }
-        updateButtonPosition(); // Update position on toggle
-    });
-
-    // Append the parent container to the body
+    // 2) create a fresh parent wrapper
+    var parentContainer = document.createElement('div');
+    parentContainer.id = 'parent-container-' + panelcount;
+    parentContainer.classList.add('parent-container');
     document.body.prepend(parentContainer);
 
-    // Append the toggle button to the body (not within the parent container)
-    document.body.appendChild(toggleButton);
+    // 3) create the panel DIV
+    var charmscheckpanel = document.createElement('div');
+    charmscheckpanel.id = 'charmscheckpanel' + panelcount;
+    charmscheckpanel.classList.add('charmscheckpanel', 'collapsed');
+    parentContainer.appendChild(charmscheckpanel);
 
-    // Ensure button is correctly positioned after initial animation
-    toggleButton.addEventListener('animationend', () => {
+    // 4) add your header/content
+    var content = document.createElement('div');
+    content.innerHTML = '<p>Charms Check Extension 25 — Sheet #' + panelcount + '</p>';
+    charmscheckpanel.appendChild(content);
+
+    // 5) inline the iframe
+    var iframe = document.createElement('iframe');
+    iframe.src = 'https://charmscheck.com/character-sheet-25/';
+    iframe.classList.add('iframe-content');
+    charmscheckpanel.appendChild(iframe);
+
+    // 6) create the toggle button
+    var toggleButton = document.createElement('button');
+    toggleButton.innerHTML =
+        '<img src="https://charmscheck.com/wp-content/uploads/2021/09/cropped-Icon1.png" alt="Toggle">';
+    toggleButton.classList.add('toggle-button', 'initial-animation');
+
+    // 7) click handler: atomically toggle panel + floating
+    toggleButton.addEventListener('click', function () {
+        // flip both panel classes
+        charmscheckpanel.classList.toggle('collapsed');
+        charmscheckpanel.classList.toggle('expanded');
+        // and flip the button’s floating state
+        toggleButton.classList.toggle('floating');
+    }, false);
+
+    // 8) append the toggle into our flex-column container
+    toggleContainer.appendChild(toggleButton);
+
+    // 9) finish your initial-animation hook
+    toggleButton.addEventListener('animationend', function () {
         toggleButton.classList.remove('initial-animation');
-        toggleButton.style.top = '10px'; // Set final top position
-        updateButtonPosition(); // Set initial position after animation
-    });
+    }, false);
 
-    createiframe();
+    panelcount++;
 }
 
-// Function to create and append an iframe to charmscheckpanel
+// optional helper if you call it elsewhere
 function createiframe() {
-    // Get the charmscheckpanel element
     var charmscheckpanel = document.getElementById('charmscheckpanel');
     if (!charmscheckpanel) {
         console.error('Element with id "charmscheckpanel" not found.');
         return;
     }
-
-    // Create an iframe element
     var iframe = document.createElement('iframe');
     iframe.src = "https://charmscheck.com/character-sheet-25/";
-    iframe.classList.add('iframe-content'); // Add class to iframe
-
-    // Append the iframe to the charmscheckpanel
+    iframe.classList.add('iframe-content');
     charmscheckpanel.appendChild(iframe);
 }
+
+function removeAllParentContainers() {
+    // grab a static list of every .parent-container in the document
+    var panels = document.querySelectorAll('.parent-container');
+    
+    // remove each one—no other siblings will be touched
+    panels.forEach(function(panel) {
+      panel.parentNode.removeChild(panel);
+    });
+  }
+  
