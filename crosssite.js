@@ -17,22 +17,27 @@ function callfunction(msg) {
     }
 }
 
-function isChatWindowOpen() {
-    var chatWindow = document.querySelector('[jsname="ME4pNd"]');
-    var messageInput = document.querySelector('textarea');
-    var sendButton  = document.querySelector('button[jsname="SoqoBf"]');
-
-    return chatWindow && isElementVisible(chatWindow) && messageInput && sendButton;
-}
-
 function openChatWindow() {
     return new Promise(function(resolve, reject) {
+        // if clickChatButton never calls back, we’ll bail after 5 s
+        var timeoutId = setTimeout(function() {
+            reject(new Error("openChatWindow timed out after 5 s"));
+        }, 5000);
+
         clickChatButton(
             function() {
-                chatWindowOpen = true;
-                resolve();
+                clearTimeout(timeoutId);
+                // sanity-check that the dialog really is open
+                if (isChatWindowOpen()) {
+                    chatWindowOpen = true;
+                    resolve();
+                }
+                else {
+                    reject(new Error("openChatWindow: button clicked but dialog not found"));
+                }
             },
             function(err) {
+                clearTimeout(timeoutId);
                 reject(err);
             }
         );
@@ -41,45 +46,41 @@ function openChatWindow() {
 
 var debounceTimeout = null;
 function msgpostmanager(message) {
-    if (debounceTimeout) {
-        clearTimeout(debounceTimeout);
-    }
+    if (debounceTimeout) clearTimeout(debounceTimeout);
 
     debounceTimeout = setTimeout(function() {
         messagePending = true;
 
-        if (!chatWindowOpen) {
-            openChatWindow().then(
-                function() {
-                    sendMessage(message).then(
-                        function() {
-                            messagePending = false;
-                            chatWindowOpen = true;
-                        },
-                        function(err) {
-                            console.error("Error sending message:", err);
-                            messagePending = false;
-                            chatWindowOpen = true;
-                        }
-                    );
-                },
-                function(err) {
-                    console.error("Error opening chat window:", err);
-                    messagePending = false;
-                    chatWindowOpen = false;
-                }
-            );
+        // Log current chat‐window state
+        console.log("msgpostmanager: isChatWindowOpen() →", isChatWindowOpen());
+
+        function doSend() {
+            sendMessage(message)
+            .then(function() {
+                console.log("sendMessage resolved");
+                messagePending = false;
+            })
+            .catch(function(err) {
+                console.error("Error sending message:", err);
+                messagePending = false;
+            });
+        }
+
+        if (!isChatWindowOpen()) {
+            console.log("Chat not open → calling openChatWindow()");
+            openChatWindow()
+            .then(function() {
+                console.log("openChatWindow resolved, isChatWindowOpen() →", isChatWindowOpen());
+                doSend();
+            })
+            .catch(function(err) {
+                console.error("Error opening chat window:", err);
+                messagePending = false;
+            });
         }
         else {
-            sendMessage(message).then(
-                function() {
-                    messagePending = false;
-                },
-                function(err) {
-                    console.error("Error sending message:", err);
-                    messagePending = false;
-                }
-            );
+            console.log("Chat already open → sending directly");
+            doSend();
         }
     }, 300);
 }
@@ -270,4 +271,19 @@ function finalizeInitialization() {
         msgpostmanager("{AUTOMATED MESSAGE} Hey everyone! I have logged in with my charms check extension enabled!");
         initialAttemptFailed = false;
     }
+}
+
+function isElementVisible(element) {
+    // returns exactly true or false
+    return !!(element && element.offsetWidth > 0 && element.offsetHeight > 0);
+}
+
+function isChatWindowOpen() {
+    var aside = document.querySelector('aside[jsname="ME4pNd"]');
+    var asideVisible = aside && aside.offsetParent !== null;
+
+    var inputBox = document.querySelector('textarea[jsname="YPqjbf"]');
+    var inputVisible = inputBox && inputBox.offsetHeight > 0 && inputBox.offsetWidth > 0;
+
+    return asideVisible && inputVisible;
 }

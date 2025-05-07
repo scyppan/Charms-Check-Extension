@@ -1,4 +1,3 @@
-let chatWindowOpened = false;
 let actionInProgress = false;
 
 function masterScript() {
@@ -37,24 +36,31 @@ function initializecharmscheck() {
     console.log("Initializing charmscheck...");
     createcharmscheckpanel();
     console.log("Charmscheck initialized");
-    console.log("Testing...");
 
     masterScript().then(function() {
         addeventlistener();
 
         return new Promise(function(resolve, reject) {
-            clickChatButton(
-                function() {
-                    console.log("Chat window confirmed.");
-                    resolve();
-                },
-                function(err) {
-                    console.error("Failed to open chat window:", err);
-                    reject(err);
-                }
-            );
+            // ─── only click if it's not already open ───
+            if (isChatWindowOpen()) {
+                console.log("Chat already open, skipping click.");
+                resolve();
+            }
+            else {
+                clickChatButton(
+                    function() {
+                        console.log("Chat window confirmed.");
+                        resolve();
+                    },
+                    function(err) {
+                        console.error("Failed to open chat window:", err);
+                        reject(err);
+                    }
+                );
+            }
         });
     }).then(function() {
+        // post your automated message
         msgpostmanager("{AUTOMATED MESSAGE} Hey everyone! I have logged in with my charms check extension enabled!");
         console.log("Message posted.");
     }).catch(function(err) {

@@ -11,10 +11,6 @@ function simulateClick(element) {
     }
 }
 
-function isElementVisible(element) {
-    return element && element.offsetWidth > 0 && element.offsetHeight > 0;
-}
-
 function retryUntilSuccess(action, maxRetries, delay, onSuccess, onFailure) {
     var attempts = 0;
 
@@ -34,7 +30,7 @@ function retryUntilSuccess(action, maxRetries, delay, onSuccess, onFailure) {
 
 function openMoreOptionsPanel(onSuccess, onFailure) {
     retryUntilSuccess(
-        function() {
+        function () {
             var btn = document.querySelector('[jscontroller="PIVayb"][aria-label="More options"]');
             if (isElementVisible(btn)) {
                 console.log("More options button is visible. Clicking...");
@@ -45,9 +41,9 @@ function openMoreOptionsPanel(onSuccess, onFailure) {
         },
         50,
         100,
-        function() {
+        function () {
             retryUntilSuccess(
-                function() {
+                function () {
                     var panel = document.querySelector('.TZFSLb.AM6FT.P9KVBf.qjTEB');
                     return isElementVisible(panel);
                 },
@@ -63,20 +59,23 @@ function openMoreOptionsPanel(onSuccess, onFailure) {
 
 function clickChatButton(onSuccess, onFailure) {
     retryUntilSuccess(
-        function() {
+        function () {
             var btn = document.querySelector('[aria-label="Chat with everyone"][jsname="A5il2e"]');
             if (isElementVisible(btn)) {
-                console.log("Chat button is visible. Clicking...");
-                simulateClick(btn);
+                if (!isChatWindowOpen()) {
+                    console.log("Chat button is visible & chat is closed. Clicking...");
+                    simulateClick(btn);
+                }
+
                 return true;
             }
             return false;
         },
         50,
         200,
-        function() {
+        function () {
             retryUntilSuccess(
-                function() {
+                function () {
                     var win = document.querySelector('[jsname="ME4pNd"]');
                     var input = document.querySelector('textarea');
                     var send = document.querySelector('button[jsname="SoqoBf"]');
