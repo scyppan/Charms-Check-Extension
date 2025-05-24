@@ -233,6 +233,9 @@ function addeventlistener() {
                     toggleBtn.appendChild(span);
                 }
                 break;
+            case "detailsclick":
+                
+            break;
             default:
                 //console.log("Received message from iframe:", event.data);
                 //console.log(typeof event.data, event.data);
