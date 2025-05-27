@@ -68,6 +68,12 @@ function createcharmscheckpanel() {
     // 8) append toggle
     toggleContainer.appendChild(toggleButton);
 
+    // 8a) enable HTML5 drag‐and‐drop
+    toggleButton.draggable = true;
+toggleButton.addEventListener('dragstart', onToggleDragStart, false);
+toggleButton.addEventListener('dragend',   onToggleDragEnd,   false);
+toggleButton.addEventListener('dragover',  onToggleDragOver,  false);
+
     // 9) finish initial-animation
     toggleButton.addEventListener('animationend', function () {
         toggleButton.classList.remove('initial-animation');
@@ -82,6 +88,22 @@ function createcharmscheckpanel() {
     }, false);
 
     panelcount++;
+}
+
+function onToggleDragStart(e) {
+  this.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+function onToggleDragEnd() {
+  this.classList.remove('dragging');
+}
+function onToggleDragOver(e) {
+  e.preventDefault();
+  const dragging = document.querySelector('.dragging');
+  // insert before or after based on cursor
+  const rect = this.getBoundingClientRect();
+  const after = e.clientY > rect.top + rect.height/2;
+  this.parentNode.insertBefore(dragging, after ? this.nextSibling : this);
 }
 
 // optional helper if you call it elsewhere
