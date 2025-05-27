@@ -1,39 +1,49 @@
-body {
-    font-family: sans-serif;
-    padding: 1em;
-    margin: 0;
+  html {
+    width: 512px;
   }
-  
+
+  body {
+    margin: 0 !important;
+    padding: 7px !important;
+    background: #f7f3ee;
+    box-sizing: border-box !important;
+  }
+
   #controls {
-    margin-bottom: 1em;
-  }
-  
-  #sheets {
     display: flex;
-    flex-direction: column;
-    gap: 1em;
-    max-height: 100vh;
-    overflow-y: auto;
-  }
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.6em;
   
-  .sheet-wrapper {
-    display: flex;
-    flex-direction: column;
+    border-radius: 6px;
   }
-  
-  .toggle-btn {
-    padding: 0.5em;
-    font-size: 1em;
-    cursor: pointer;
+
+  #controls label {
+    margin: 0;
+    font-weight: 600;
+    font-size: 0.95em;
+    color: #333;
   }
-  
-  .sheet-frame {
-    width: 100%;
+
+  #controls input {
+    width: 32px;
+    padding: 7px;
     border: 1px solid #ccc;
-    box-sizing: border-box;
+    border-radius: 4px;
+    font-size: 0.95em;
   }
-  
-  /* style.css — add */
-.toggle-button.dragging {
-  opacity: 0.5 !important;
-}
+
+  #controls button {
+    padding: 0.4em 0.8em;
+    border: none;
+    border-radius: 4px;
+    background: #8aac9e;
+    color: #252525;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  #controls button:hover {
+    opacity: 0.85;
+  }

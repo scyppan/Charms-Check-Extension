@@ -9,8 +9,14 @@
   ],
   "content_scripts": [
     {
-      "css": ["style.css", "battle.css", "backgroundrand.css"],
-      "matches": ["https://meet.google.com/*"],
+      "css": [
+        "style.css",
+        "battle.css",
+        "backgroundrand.css"
+      ],
+      "matches": [
+        "https://meet.google.com/*"
+      ],
       "exclude_matches": [
         "https://meet.google.com/landing*",
         "https://meet.google.com/*/unsupported"
@@ -27,6 +33,11 @@
     }
   ],
   "action": {
+    "default_icon": {
+      "16": "icons/house16.png",
+      "48": "icons/house48.png",
+      "128": "icons/house128.png"
+    },
     "default_popup": "battlemanager.html",
     "default_title": "Charms Check Chrome Extension for Google Meet"
   }
