@@ -115,9 +115,9 @@
 
 span.toggle-label {
     position: absolute !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    text-align: center !important;
+    
+    
+    text-align: left !important;
     overflow: visible !important;
 }
 
@@ -129,7 +129,7 @@ span.toggle-label {
     font-size: 9px !important;
     margin-top: 3px !important;
     color: #333 !important;
-    text-align: center !important;
+    text-align: left !important;
     white-space: nowrap !important;
     overflow: visible !important;
     pointer-events: none !important;

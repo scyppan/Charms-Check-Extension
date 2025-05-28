@@ -15,4 +15,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     }
     sendResponse({ status: 'ok' });
   }
+
+  if(message.action==='spawncreatures'){
+  for(let i=0;i<message.count;i++) createcreaturecreatorpanel();
+  sendResponse({status:'ok'});
+}
+
 });

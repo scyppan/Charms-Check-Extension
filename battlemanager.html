@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Battle Manager</title>
@@ -7,12 +8,19 @@
   <script src="popup.js" defer></script>
 
 </head>
+
 <body>
   <div id="controls">
     <label for="numSheets">How many Character Sheets?</label>
     <input type="number" id="numSheets" min="1" value="1">
     <button id="createBtn">Spawn sheets</button>
-    <button id="destroyBtn">Destroy all sheets</button>
+    
+    <label for="numGeneric">How many Generic Creatures?</label>
+    <input type="number" id="numGeneric" min="1" value="1">
+    <button id="addGenericBtn">+Spawn creatures</button>
   </div>
+
+  <button id="destroyBtn">Destroy all sheets</button>
 </body>
+
 </html>

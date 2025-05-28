@@ -90,6 +90,87 @@ toggleButton.addEventListener('dragover',  onToggleDragOver,  false);
     panelcount++;
 }
 
+function createcreaturecreatorpanel() {
+  // 1) ensure shared toggle container
+  var toggleContainer = document.getElementById('toggle-container');
+  if (!toggleContainer) {
+    toggleContainer = document.createElement('div');
+    toggleContainer.id = 'toggle-container';
+    document.body.appendChild(toggleContainer);
+  }
+
+  // 2) parent wrapper
+  var parentContainer = document.createElement('div');
+  parentContainer.id = 'parent-container-' + panelcount;
+  parentContainer.classList.add('parent-container');
+  parentContainer.dataset.panelId = panelcount;
+  document.body.prepend(parentContainer);
+
+  // 3) panel
+  var charmscheckpanel = document.createElement('div');
+  charmscheckpanel.id = 'charmscheckpanel' + panelcount;
+  charmscheckpanel.classList.add('charmscheckpanel', 'collapsed');
+  charmscheckpanel.dataset.panelId = panelcount;
+  parentContainer.appendChild(charmscheckpanel);
+
+  // 4) header + destroy
+  var content = document.createElement('div');
+  content.innerHTML =
+    '<span class="panel-header">' +
+      '<h6>Creature Creator — Panel #' + panelcount + '</h6>' +
+      '<button class="close-panel-btn" title="destroy panel #' + panelcount + '">' +
+        'destroy this panel' +
+      '</button>' +
+    '</span>';
+  charmscheckpanel.appendChild(content);
+
+  // 5) iframe
+  var iframe = document.createElement('iframe');
+  iframe.src = 'https://charmscheck.com/creature-creator/';
+  iframe.classList.add('iframe-content');
+  iframe.dataset.panelId = panelcount;
+  charmscheckpanel.appendChild(iframe);
+
+  // 6) toggle button with pale-green wash
+  var toggleButton = document.createElement('button');
+  toggleButton.classList.add('toggle-button', 'initial-animation', 'creature-panel');
+  toggleButton.dataset.panelId = panelcount;
+  toggleButton.innerHTML =
+    '<img src="https://charmscheck.com/wp-content/uploads/2021/09/cropped-Icon1.png" alt="Toggle">'
+  // link for easy lookup
+  iframe._toggleButton = toggleButton;
+  toggleButton._iframe = iframe;
+
+  // 7) toggle handler
+  toggleButton.addEventListener('click', function () {
+    charmscheckpanel.classList.toggle('collapsed');
+    charmscheckpanel.classList.toggle('expanded');
+    toggleButton.classList.toggle('floating');
+  }, false);
+
+  // 8) append + drag-and-drop
+  toggleContainer.appendChild(toggleButton);
+  toggleButton.draggable = true;
+  toggleButton.addEventListener('dragstart', onToggleDragStart, false);
+  toggleButton.addEventListener('dragend',   onToggleDragEnd,   false);
+  toggleButton.addEventListener('dragover',  onToggleDragOver,  false);
+
+  // 9) remove initial-animation class
+  toggleButton.addEventListener('animationend', function () {
+    toggleButton.classList.remove('initial-animation');
+  }, false);
+
+  // 10) destroy handler
+  var closeBtn = charmscheckpanel.querySelector('.close-panel-btn');
+  closeBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    parentContainer.remove();
+    toggleButton.remove();
+  }, false);
+
+  panelcount++;
+}
+
 function onToggleDragStart(e) {
   this.classList.add('dragging');
   e.dataTransfer.effectAllowed = 'move';

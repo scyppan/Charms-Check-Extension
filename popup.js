@@ -13,8 +13,6 @@ document.addEventListener('DOMContentLoaded', function () {
       console.warn('popup.js: invalid sheet count:', input.value);
       return;
     }
-
-    // send message to the active tab’s content script
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       if (!tabs[0]) {
         console.error('popup.js: no active tab');
@@ -33,10 +31,45 @@ document.addEventListener('DOMContentLoaded', function () {
       );
     });
   });
+
+  var genericbtn   = document.getElementById('addGenericBtn');
+  var genericinput = document.getElementById('numGeneric');
+  if (!genericbtn || !genericinput) {
+    console.error('popup.js: couldn’t find #addGenericBtn or #numGeneric');
+  } else {
+    genericbtn.addEventListener('click', function () {
+      var count = parseInt(genericinput.value, 10) || 0;
+      if (count < 1) {
+        console.warn('popup.js: invalid creature count:', genericinput.value);
+        return;
+      }
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        if (!tabs[0]) {
+          console.error('popup.js: no active tab');
+          return;
+        }
+        chrome.tabs.sendMessage(
+          tabs[0].id,
+          { action: 'spawncreatures', count: count },
+          function (response) {
+            if (chrome.runtime.lastError) {
+              console.error('popup.js:', chrome.runtime.lastError.message);
+            } else {
+              console.log('popup.js: spawncreatures →', response);
+            }
+          }
+        );
+      });
+    });
+  }
 });
 
 document.getElementById('destroyBtn').addEventListener('click', () => {
   chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+    if (!tabs[0]) {
+      console.error('popup.js: no active tab');
+      return;
+    }
     chrome.tabs.sendMessage(tabs[0].id, { action: 'destroySheets' });
   });
 });
