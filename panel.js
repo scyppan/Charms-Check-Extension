@@ -171,13 +171,90 @@ function createcreaturecreatorpanel() {
   panelcount++;
 }
 
+function createnamedpanel() {
+  // 1) ensure shared toggle container
+  var toggleContainer = document.getElementById('toggle-container');
+  if (!toggleContainer) {
+    toggleContainer = document.createElement('div');
+    toggleContainer.id = 'toggle-container';
+    document.body.appendChild(toggleContainer);
+  }
+
+  // 2) parent wrapper
+  var parentContainer = document.createElement('div');
+  parentContainer.id = 'parent-container-' + panelcount;
+  parentContainer.classList.add('parent-container');
+  parentContainer.dataset.panelId = panelcount;
+  document.body.prepend(parentContainer);
+
+  // 3) panel
+  var panel = document.createElement('div');
+  panel.id = 'charmscheckpanel' + panelcount;
+  panel.classList.add('charmscheckpanel', 'collapsed');
+  panel.dataset.panelId = panelcount;
+  parentContainer.appendChild(panel);
+
+  // 4) header + destroy
+  var hdr = document.createElement('div');
+  hdr.innerHTML =
+    '<span class="panel-header">' +
+      '<h6>Named Viewer — Panel #' + panelcount + '</h6>' +
+      '<button class="close-panel-btn" title="destroy panel #' + panelcount + '">destroy this panel</button>' +
+    '</span>';
+  panel.appendChild(hdr);
+
+  // 5) iframe
+  var iframe = document.createElement('iframe');
+  iframe.src = 'https://charmscheck.com/named-creature-viewer/';
+  iframe.classList.add('iframe-content');
+  iframe.dataset.panelId = panelcount;
+  panel.appendChild(iframe);
+
+  // 6) toggle button
+  var btn = document.createElement('button');
+  btn.classList.add('toggle-button', 'initial-animation', 'named-panel');
+  btn.dataset.panelId = panelcount;
+  btn.innerHTML = '<img src="https://charmscheck.com/wp-content/uploads/2021/09/cropped-Icon1.png" alt="Toggle">' +
+                  '<span class="toggle-label"></span>';
+  iframe._toggleButton = btn; btn._iframe = iframe;
+
+  // 7) handler & append
+  btn.addEventListener('click', function(){
+    panel.classList.toggle('collapsed');
+    panel.classList.toggle('expanded');
+    btn.classList.toggle('floating');
+  }, false);
+  toggleContainer.appendChild(btn);
+
+  // 8) drag‐and‐drop
+  btn.draggable = true;
+  btn.addEventListener('dragstart', onToggleDragStart, false);
+  btn.addEventListener('dragend',   onToggleDragEnd,   false);
+  btn.addEventListener('dragover',  onToggleDragOver,  false);
+
+  // 9) end animation
+  btn.addEventListener('animationend', function(){ btn.classList.remove('initial-animation'); }, false);
+
+  // 10) destroy
+  hdr.querySelector('.close-panel-btn').addEventListener('click', function(e){
+    e.stopPropagation();
+    parentContainer.remove();
+    btn.remove();
+  }, false);
+
+  panelcount++;
+}
+
+
 function onToggleDragStart(e) {
   this.classList.add('dragging');
   e.dataTransfer.effectAllowed = 'move';
 }
+
 function onToggleDragEnd() {
   this.classList.remove('dragging');
 }
+
 function onToggleDragOver(e) {
   e.preventDefault();
   const dragging = document.querySelector('.dragging');
