@@ -1,0 +1,146 @@
+
+
+/* CSS for toggle button */
+.toggle-button {
+    /* static by default so flex can stack */
+    position: static;
+    top: auto;
+    left: auto;
+
+    /* your existing styling */
+    background-color: #ede5d1;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    cursor: pointer;
+
+    /* keep the slide transition for when floating */
+    transition: left 0.7s ease, top 0.3s ease;
+}
+
+.toggle-button img {
+    width: 24px;
+    height: 24px;
+    display: block;
+    margin: auto;
+    /* Center the image within the button */
+}
+
+#toggle-container {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+
+    /* make it a vertical flex that can wrap into new columns */
+    display: flex;
+    flex-flow: column wrap;
+
+    /* lock its height so wrapping can happen */
+    height: calc(100vh - 20px);
+
+    /* keep the same gap */
+    gap: 8px;
+
+    /* scroll if you still overflow vertically */
+    overflow-y: auto;
+
+    z-index: 1001;
+}
+
+/* base toggle button */
+.toggle-button {
+    /* position: static is the default; just don’t override it */
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: left 0.7s ease, top 0.3s ease;
+    /* keep your existing background, size, etc. */
+    background-color: #ede5d1;
+    color: #fff;
+    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    position: relative;
+    /* positioning context for the label */
+    overflow: visible;
+    /* allow children to hang outside */
+}
+
+.toggle-button .toggle-label {
+    position: absolute;
+    top: 50%;
+    left: calc(100% + var(--label-gap));
+    transform: translateY(-50%);
+}
+
+.toggle-label {
+    display: block !important;
+    background-color: #c9b486 !important;
+    border-radius: 7px !important;
+    font-size: 8px !important;
+    margin-top: 3px !important;
+    color: #333 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    pointer-events: none !important;
+}
+
+
+
+.toggle-button.floating {
+    position: fixed !important;
+    top: 10px;
+    left: calc(45% + 20px);
+    z-index: 1002;
+}
+
+
+
+
+
+/* Appended rules */
+
+
+
+
+
+
+.toggle-button .toggle-label {
+    position: absolute;
+    top: 50%;
+    left: calc(100% + var(--label-gap));
+    transform: translateY(-50%);
+}
+
+
+.toggle-label {
+    display: block !important;
+    background-color: #c9b486 !important;
+    border-radius: 7px !important;
+    font-size: 8px !important;
+    margin-top: 3px !important;
+    color: #333 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    pointer-events: none !important;
+}
+
+.toggle-label:empty {
+    display: none !important;
+}
+
+
+
+
+
+.toggle-button .toggle-label {
+    position: absolute;
+    top: 50%;
+    left: calc(100% + var(--label-gap));
+    transform: translateY(-50%);
+}

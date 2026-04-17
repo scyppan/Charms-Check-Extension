@@ -1,80 +1,140 @@
 /* CSS for iframe */
 .iframe-content {
-    width: 100%;
-    height: 100%;
-    border: none; /* Remove border */  
+    /* scale down to 90% */
+    transform: scale(0.9);
+    transform-origin: top left;
+
+    /* compensate so you don’t get scrollbars */
+    width: calc(100% / 0.9);
+    height: calc(100% / 0.9);
+
+    border: none;
+    /* Remove border */
 }
 
-/* CSS for parent container */
-#parent-container {
+.parent-container {
+    position: absolute;
+    top: 0;
+    left: 0;
     display: flex;
     width: 100%;
     height: 100vh;
 }
 
 /* CSS for charmscheckpanel */
-#charmscheckpanel {
+.charmscheckpanel {
     height: 100%;
-    width: 0; /* Start collapsed */
-    background-color: #ede5d1; /* Background color */
-    border: 1px solid #c9b486; /* Border color */
-    overflow-x: hidden; /* Hide horizontal overflow */
-    transition: width 0.3s; /* Smooth transition */
-    color: #000; /* Text color */
+    width: 0;
+    /* Start collapsed */
+    background-color: #ede5d1;
+    /* Background color */
+    border: 1px solid #c9b486;
+    /* Border color */
+    overflow-x: hidden;
+    /* Hide horizontal overflow */
+    transition: width 0.3s;
+    /* Smooth transition */
+    color: #000;
+    /* Text color */
     display: flex;
     flex-direction: column;
-    z-index: 1000; /* Ensure it is above other content */
+    z-index: 1003;
+    /* Ensure it is above other content */
 }
 
 /* CSS for expanded panel */
-#charmscheckpanel.expanded {
-    width: 35%; /* Expanded width */
+.expanded {
+    width: 45%;
+    /* Expanded width */
 }
 
 /* CSS for collapsed panel */
-#charmscheckpanel.collapsed {
-    width: 0px; /* Collapsed width */
+.collapsed {
+    width: 0px;
+    /* Collapsed width */
 }
 
-/* CSS for toggle button */
-.toggle-button {
-    position: absolute; /* Position absolutely for initial animation */
-    top: 10px; /* Final top position */
-    left: 10px; /* Final left position */
-    z-index: 1001;
-    background-color: #ede5d1; /* Button background color */
-    color: #fff;
-    border: none;
-    padding: 3px;
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 8px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+
+.panel-header h6 {
+    margin: 0;
+    font-size: 1em;
+    color: #000;
+}
+
+.close-panel-btn {
+    background-color: #d6c1c1;
+    border-radius: 7px;
     cursor: pointer;
-    border-radius: 12px;
-    height: 40px; /* Increase the height to provide more space */
-    width: 40px; /* Set a fixed width to prevent squishing */
-    overflow: visible; /* Allow visibility of any overflow */
-    transition: left 0.3s, top 0.3s; /* Smooth transition for final positioning */
+    color: #000;
 }
 
-.toggle-button.initial-animation {
-    top: 50%; /* Center vertically */
-    left: 50%; /* Center horizontally */
-    opacity: 0; /* Initially hidden */
-    animation: rotateAndGlide 2s 2s ease-out forwards;
-    transform: translate(-50%, -50%); /* Center the button */
-    transform-origin: center; /* Set the origin point for transformations */
+#toggle-container {
+    position: fixed;
+    display: flex;
+    flex-flow: column wrap;
+    height: calc(100vh - 20px);
+    gap: 8px;    
+    z-index: 1001;
 }
 
 .toggle-button img {
     width: 24px;
     height: 24px;
     display: block;
-    margin: auto; /* Center the image within the button */
+    margin: auto;
 }
 
-@keyframes rotateAndGlide {
-    0% {
-        transform: rotate(0deg) translateX(0) translateY(0);
-    }
-    100% {
-        transform: rotate(360deg) translateX(100px) translateY(50px);
-    }
+.toggle-button {
+    background-color: #ede5d1;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    cursor: pointer;
+    transition: left 0.7s ease, top 0.3s ease;
+    position: relative;
+    overflow: visible;
+}
+
+.toggle-button.floating {
+    position: fixed !important;
+    top: 10px;
+    left: calc(45% + 20px);
+    z-index: 1002;
+}
+
+span.toggle-label {
+    position: absolute !important;
+    
+    
+    text-align: left !important;
+    overflow: visible !important;
+}
+
+.toggle-label {
+    padding: 1px;
+    display: block !important;
+    background-color: #c9b486 !important;
+    border-radius: 3px !important;
+    font-size: 9px !important;
+    margin-top: 3px !important;
+    color: #333 !important;
+    text-align: left !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    pointer-events: none !important;
+}
+
+.toggle-label:empty {
+    display: none !important;
 }
